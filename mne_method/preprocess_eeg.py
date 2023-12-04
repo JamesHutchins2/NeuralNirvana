@@ -50,13 +50,18 @@ class EEGDataProcessor:
         #set back to the class
         self.raw = normalized_raw
         
+        #print out the sample frequency
+        print(self.raw.info["sfreq"])
+        #print out the shape
+        print(self.raw.get_data().shape)
+        
             
     
 
         
 
     #Here we can see the window around the event
-    def extract_epochs(self, tmin=-0.128, tmax=0.256):
+    def extract_epochs(self, tmin=-0.128, tmax=0.512):
         events, event_dict = mne.events_from_annotations(self.raw, event_id=None, regexp=None)
         print(events.shape)  # Check the shape of the events array
         # Method to extract epochs from the preprocessed data
@@ -76,7 +81,7 @@ class EEGDataLoader:
         # Assuming 'epochs' is your MNE Epochs object
         eeg_data = epochs.get_data()  # Shape (n_epochs, n_channels, n_times)
         print(eeg_data.shape)
-        eeg_data = eeg_data[:, :, :128]
+        eeg_data = eeg_data[:, :, :512]
 
         self.n_channels, self.n_times = eeg_data.shape[1], eeg_data.shape[2]
         eeg_data_tensor = torch.tensor(eeg_data, dtype=torch.float32)
@@ -151,6 +156,12 @@ def manage_loader(participant_number):
     return train_loader, test_loader, n_channels, n_times
     
     
+def main():
+    
+    manage_loader(1)
+    
     
 
     
+if __name__ == "__main__":
+    main()
