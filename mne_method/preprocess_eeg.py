@@ -21,45 +21,12 @@ class EEGDataProcessor:
         print(self.raw.info["ch_names"])
         print(self.raw.info)
         
-    def normalize_channel(self, channel):
-        if channel.size == 0:
-            return channel  # Return the channel as-is if it's empty
-        return (channel - np.min(channel)) / (np.max(channel) - np.min(channel))
     
     def preprocess_raw_data(self):
         # Method to preprocess the loaded raw EEG data
         self.raw.set_eeg_reference('average', projection=True)  # Set EEG reference to average
         self.raw.filter(None, 90., fir_design='firwin')  # Apply a low-pass filter at 90 Hz
         
-        
-        # we will now normalize the data using the mean and standard deviation
-        data = self.raw.get_data()
-        
-        # extract the annotations
-        original_annotations = self.raw.annotations
-        
-        # normalize the data between 1 and 0
-        normalized_data = np.array([self.normalize_channel(channel) for channel in data])
-        
-        info = self.raw.info
-        #put back into mne form
-        normalized_raw = mne.io.RawArray(normalized_data, info)
-        #add back the annotations
-        normalized_raw.set_annotations(original_annotations)
-        
-        #set back to the class
-        self.raw = normalized_raw
-        
-        #print out the sample frequency
-        print(self.raw.info["sfreq"])
-        #print out the shape
-        print(self.raw.get_data().shape)
-        
-            
-    
-
-        
-
     #Here we can see the window around the event
     def extract_epochs(self, tmin=-0.128, tmax=0.512):
         events, event_dict = mne.events_from_annotations(self.raw, event_id=None, regexp=None)
@@ -150,7 +117,7 @@ def manage_loader(participant_number):
     
     #load the data for that participant
     paths_EEG = create_file_names()
-    raw_file_path = paths_EEG[0]
+    raw_file_path = paths_EEG[participant_number -1]
     train_loader, test_loader, n_channels, n_times = load_and_preprocess_eeg_data(raw_file_path, eventDescription)
     
     return train_loader, test_loader, n_channels, n_times
