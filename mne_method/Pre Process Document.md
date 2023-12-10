@@ -27,3 +27,22 @@ There are also a few helper functions in this file for running the entire system
 
 
 ### 2. Data Embedding
+
+The embedding of the data is preformed in numerous steps being:
+
+1. Patching of trial periods into discrete time periods of 4 ms in length 32 of which make up a single trial of 128ms.
+2. The convolution of each of these patches into 1D arrays of the length of the channel input.
+3. The application of positional encodings through each of the trial length patches.
+
+## Patching, Convolution and Masking
+The patching methods are contained within the `EEG_patch.py` file. This file contains 2 classes, ***`EEGDataLoader`***, and ***`EEGDataProcessor`***. This process is preformed in parallel with the convolution, and masking process. The Patching function in class: `EEGDataPatcher` takes in a pytoch data loader object which is created by the pre processing pipline, along with a convolution indicator `conv` which is a boolean value and indicates if convolution should be preformed. The data is then by calling this class patched into the patch lengths as discussed, and then convolved if the `conv` indicator is set to true. The masking process is preformed by the `mask` function in the `EEGDataPatcher` class. It calls another class called `masker` that is contained in the same file. This class preforms a similar method to that of ***Dream Diffusion***. Each epoch is passed into the function, and returned is three data items. 
+1. `masked_data` - This is the data that has been masked by the masking function.
+2. `mask` - This is the mask that has been applied to the data.
+3. `ids_resotre` - This provides the values, and indicies that were masked which allows for the restoration of the data to its original form.
+
+
+## Positional Encoding
+
+Positional Encoding is done using a new method that combines both relative, and absolute positional encodings know as `tAPE`. 
+
+This uses the common application of sinusoidal positional encodings, but also adds a relative positional encoding to the input. This is done by taking the difference between the current time step, and the previous time step, and encoding this as a sinusoidal positional encoding. Code for this process is within the `positional_encoding` folder. For the primary development of this system we will only use absolute positional encoding, but will look to add relative positional encoding in the future.
