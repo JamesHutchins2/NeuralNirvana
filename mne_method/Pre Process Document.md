@@ -46,3 +46,7 @@ The patching methods are contained within the `EEG_patch.py` file. This file con
 Positional Encoding is done using a new method that combines both relative, and absolute positional encodings know as `tAPE`. 
 
 This uses the common application of sinusoidal positional encodings, but also adds a relative positional encoding to the input. This is done by taking the difference between the current time step, and the previous time step, and encoding this as a sinusoidal positional encoding. Code for this process is within the `positional_encoding` folder. For the primary development of this system we will only use absolute positional encoding, but will look to add relative positional encoding in the future.
+
+The reason for the application of the `tAPE` positional enocder is first, the encoder scales the values to the length of the input sequence. As we are only passing in a sequence length of 128 time chunks, often absolute positional encoders fail to sufficently apply enough variation between time steps in small temportaly dimensioned data. The second application is the simplicity, and fast computation rate acheived by the `tAPE` positional encoder. 
+
+<img src="assets/pipline.png">
