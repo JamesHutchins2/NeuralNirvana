@@ -20,7 +20,7 @@ class tAPE(nn.Module):
         max_len: the max. length of the incoming sequence (default=1024).
     """
 
-    def __init__(self, d_model=63, dropout=0.1, max_len=1028, scale_factor=1.0):
+    def __init__(self, d_model=63, dropout=0.1, max_len=128, scale_factor=1.0):
         super(tAPE, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
         pe = torch.zeros(max_len, d_model)  # positional encoding
@@ -38,15 +38,15 @@ class tAPE(nn.Module):
 
 
     def forward(self, x):
-        r"""Inputs of forward function
-        Args:
-            x: the sequence fed to the positional encoder model (required).
-        Shape:
-            x: [sequence length, batch size, embed dim]
-            output: [sequence length, batch size, embed dim]
-        """
+    # Print shapes for debugging
+        
+        # # Directly add positional encoding to x
+        
+        #transpose self.pe
+        
         x = x + self.pe
         return self.dropout(x)
+    
 
 
 class AbsolutePositionalEncoding(nn.Module):
@@ -84,6 +84,8 @@ class AbsolutePositionalEncoding(nn.Module):
             x: [sequence length, batch size, embed dim]
             output: [sequence length, batch size, embed dim]
         """
+        #transpose self.pe
+        self.pe = self.pe.transpose(1,0)
         x = x + self.pe
         return self.dropout(x)
 
@@ -111,9 +113,12 @@ class LearnablePositionalEncoding(nn.Module):
             x: [sequence length, batch size, embed dim]
             output: [sequence length, batch size, embed dim]
         """
+        
+        """
 
         x = x + self.pe
         # distance = torch.matmul(self.pe, self.pe.transpose(1,0))
         # distance_pd = pd.DataFrame(distance.cpu().detach().numpy())
         # distance_pd.to_csv('learn_position_distance.csv')
         return self.dropout(x)
+        """
